@@ -1,12 +1,13 @@
 //     keymaster.js
 //     (c) 2011-2013 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
+//     modified by Quizlet to add stacked-based scopes
 
 ;(function(global){
   var k,
     _handlers = {},
     _mods = { 16: false, 18: false, 17: false, 91: false },
-    _scope = 'all',
+    _scope = [],
     // modifier keys
     _MODIFIERS = {
       '⇧': 16, shift: 16,
@@ -220,8 +221,28 @@
   for(k in _MODIFIERS) assignKey[k] = false;
 
   // set current scope (default 'all')
-  function setScope(scope){ _scope = scope || 'all' };
-  function getScope(){ return _scope || 'all' };
+  function setScope(scope){
+    if (scope) {
+      _scope = [scope];
+    } else {
+      _scope = [];
+    }
+  };
+
+  function getScope(){ return _scope.length ? _scope[_scope.length-1] : 'all' };
+  function pushScope(scope) { _scope.push(scope); };
+
+  function popScope(scope) {
+    newScope = [];
+    for (var i = 0; i < _scope.length; i++) {
+      if (_scope[i] !== scope) {
+        newScope.push(_scope[i]);
+      } else {
+        break;
+      }
+    }
+    _scope = newScope;
+  };
 
   // delete all handlers for a given scope
   function deleteScope(scope){
@@ -284,6 +305,8 @@
   global.key = assignKey;
   global.key.setScope = setScope;
   global.key.getScope = getScope;
+  global.key.pushScope = pushScope;
+  global.key.popScope = popScope;
   global.key.deleteScope = deleteScope;
   global.key.filter = filter;
   global.key.isPressed = isPressed;

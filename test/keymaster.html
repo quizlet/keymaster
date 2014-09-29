@@ -355,6 +355,49 @@
         t.assertEqual(1, cntIssues);
       },
 
+      testPushPopScope: function(t){
+        var cntAll = 0, cntIssues = 0, cntFiles = 0;
+        key('a', 'all', function(){ cntAll++ });
+        key('a', 'issues', function(){ cntIssues++ });
+        key('a', 'files', function(){ cntFiles++ });
+
+        key.setScope();
+        t.assertEqual('all', key.getScope());
+
+        keydown(65); keyup(65);
+
+        key.pushScope('issues');
+
+        keydown(65); keyup(65);
+
+        key.pushScope('files');
+
+        keydown(65); keyup(65);
+
+        key.pushScope('none');
+
+        keydown(65); keyup(65);
+
+        key.popScope('none');
+
+        keydown(65); keyup(65);
+
+        key.popScope('files');
+
+        keydown(65); keyup(65);
+
+        key.popScope('issues');
+
+        keydown(65); keyup(65);
+
+        t.assertEqual('all', key.getScope());
+
+        t.assertEqual(7, cntAll);
+        t.assertEqual(2, cntIssues);
+        t.assertEqual(2, cntFiles);
+
+      },
+
       testDoesntFireOnUserInputElements: function(t){
         // TODO
       },
