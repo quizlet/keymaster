@@ -1,7 +1,7 @@
 //     keymaster.js
 //     (c) 2011-2013 Thomas Fuchs
 //     keymaster.js may be freely distributed under the MIT license.
-//     modified by Quizlet to add stacked-based scopes
+//     modified by Quizlet to add stacked-based scopes and a class-based filter override
 
 ;(function(global){
   var k,
@@ -212,9 +212,14 @@
   }
 
   function filter(event){
-    var tagName = (event.target || event.srcElement).tagName;
-    // ignore keypressed in any elements that support keyboard data input
-    return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+    var el = (event.target || event.srcElement);
+    var tagName = el.tagName;
+    var className = el.className;
+
+    var hasAllowedTag = tagName !== 'INPUT' && tagName !== 'SELECT' && tagName !== 'TEXTAREA';
+    var hasAllowedClass = className && className.indexOf('js-keymaster-allow') >= 0;
+
+    return hasAllowedTag || hasAllowedClass;
   }
 
   // initialize key.<modifier> to false
