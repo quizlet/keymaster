@@ -214,7 +214,7 @@
   function filter(event){
     var el = (event.target || event.srcElement);
     var tagName = el.tagName;
-    var className = el.getAttribute('class');
+    var className = el.className;
 
     var hasAllowedTag = tagName !== 'INPUT' && tagName !== 'SELECT' && tagName !== 'TEXTAREA';
     var hasAllowedClass = className && className.indexOf('js-keymaster-allow') >= 0;
