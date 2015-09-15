@@ -399,7 +399,26 @@
       },
 
       testDoesntFireOnUserInputElements: function(t){
-        // TODO
+        var cntAll = 0;
+        key('a', 'all', function(){ cntAll++ })
+
+        keydown(65, [], document.querySelector('#textarea'));
+        keydown(65, [], document.querySelector('#select'));
+        keydown(65, [], document.querySelector('#input_text'));
+
+        t.assertEqual(0, cntAll);
+      },
+
+      testFiresOnOverridenUserInputElements: function(t){
+        var cntAll = 0;
+        key('a', 'all', function(){ cntAll++ })
+
+        var textarea = document.querySelector('#textarea');
+        textarea.className = 'js-keymaster-allow';
+
+        keydown(65, [], textarea);
+
+        t.assertEqual(1, cntAll);
       },
 
       testCallsFilterFunction: function(t){
