@@ -218,7 +218,7 @@
     var tagName = el.tagName;
     var classList = el.classList;
 
-    if (! classList instanceof DOMTokenList) {
+    if (! (classList instanceof DOMTokenList)) {
       console.info('Element', el);
       throw new Error('Browser does not support classList');
     }
