@@ -211,13 +211,20 @@
       return _downKeys.slice(0);
   }
 
+  // different behavior from canonical repo to allow us to watch events on more
+  // element types
   function filter(event){
     var el = (event.target || event.srcElement);
     var tagName = el.tagName;
-    var className = el.className;
+    var classList = el.classList;
+
+    if (! (classList instanceof DOMTokenList)) {
+      console.info('Element', el);
+      throw new Error('Browser does not support classList');
+    }
 
     var hasAllowedTag = tagName !== 'INPUT' && tagName !== 'SELECT' && tagName !== 'TEXTAREA';
-    var hasAllowedClass = className && className.indexOf('js-keymaster-allow') >= 0;
+    var hasAllowedClass = classList.contains('js-keymaster-allow');
 
     return hasAllowedTag || hasAllowedClass;
   }
