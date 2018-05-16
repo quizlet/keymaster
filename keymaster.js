@@ -219,7 +219,7 @@
     var classList = el.classList;
 
     if (! (classList instanceof DOMTokenList)) {
-      console.info('Element', el);
+      console.info('Event', event);
       throw new Error('Browser does not support classList');
     }
 
