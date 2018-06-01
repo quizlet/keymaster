@@ -30,6 +30,21 @@
       ';': 186, '\'': 222,
       '[': 219, ']': 221, '\\': 220
     },
+    {
+     // numeric pad numbers have different keycodes,
+     // map them to their number counter part
+     // 0 to 9
+      96: 48, // 0
+      97: 49, // 1
+      98: 50, // 2
+      99: 51, // 3
+      100: 52, // 4
+      101: 53, // 5
+      102: 54, // 6
+      103: 55, // 7
+      104: 56, // 8
+      105: 57 // 9
+    }
     code = function(x){
       return _MAP[x] || x.toUpperCase().charCodeAt(0);
     },
@@ -66,7 +81,7 @@
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, modifiersMatch, scope;
-    key = event.keyCode;
+    key = _REVERSE_MAP[event.keyCode] || event.keyCode;
 
     if (index(_downKeys, key) == -1) {
         _downKeys.push(key);
