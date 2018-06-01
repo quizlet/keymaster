@@ -232,7 +232,7 @@
     var el = (event.target || event.srcElement);
     // HTML document does not contain tagName and classList. Instead, we set
     // the element as body tag.
-    // if (el instanceof HTMLDocument) var el = el.activeElement;
+    if (el instanceof HTMLDocument) var el = el.activeElement;
     var tagName = el.tagName;
     var classList = el.classList;
 
