@@ -231,8 +231,8 @@
   function filter(event){
     var el = (event.target || event.srcElement);
     // HTML document does not contain tagName and classList. Instead, we set
-    // the element as body tag.
-    if (el instanceof HTMLDocument) var el = el.activeElement;
+    // the element as document element.
+    var el = el instanceof HTMLDocument ? el.documentElement : el;
     var tagName = el.tagName;
     var classList = el.classList;
 
