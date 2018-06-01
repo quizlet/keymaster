@@ -30,7 +30,7 @@
       ';': 186, '\'': 222,
       '[': 219, ']': 221, '\\': 220
     },
-    {
+    _NUMPAD_TO_NORMAL = {
      // numeric pad numbers have different keycodes,
      // map them to their number counter part
      // 0 to 9
@@ -81,7 +81,7 @@
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, modifiersMatch, scope;
-    key = _REVERSE_MAP[event.keyCode] || event.keyCode;
+    key = _NUMPAD_TO_NORMAL[event.keyCode] || event.keyCode;
 
     if (index(_downKeys, key) == -1) {
         _downKeys.push(key);
@@ -230,10 +230,14 @@
   // element types
   function filter(event){
     var el = (event.target || event.srcElement);
+    // HTML documnet does not contain tagName and classList. Instead, we set
+    // the element as body tag.
+    if (el instanceof HTMLDocument) var el = el.activeElement;
     var tagName = el.tagName;
     var classList = el.classList;
 
     if (! (classList instanceof DOMTokenList)) {
+      var classList = 
       console.info('Event', event);
       throw new Error('Browser does not support classList');
     }
