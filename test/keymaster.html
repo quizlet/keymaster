@@ -512,7 +512,17 @@
 
         key.filter = oldFilter;
         key.setScope();
-      }
+      },
+
+      testNumpadKeyPressLinkToNumkey: function(t) {
+        keydown(96);
+      	t.assertTrue(key.isPressed(48));
+      	keyup(96);
+
+      	keydown(102);
+      	t.assertTrue(key.isPressed(54));
+      	keyup(102);
+      },
     });
   </script>
 </body>

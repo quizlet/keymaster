@@ -30,6 +30,21 @@
       ';': 186, '\'': 222,
       '[': 219, ']': 221, '\\': 220
     },
+    _NUMPAD_TO_NORMAL = {
+     // numeric pad numbers have different keycodes,
+     // map them to their number counter part
+     // 0 to 9
+      96: 48, // 0
+      97: 49, // 1
+      98: 50, // 2
+      99: 51, // 3
+      100: 52, // 4
+      101: 53, // 5
+      102: 54, // 6
+      103: 55, // 7
+      104: 56, // 8
+      105: 57 // 9
+    }
     code = function(x){
       return _MAP[x] || x.toUpperCase().charCodeAt(0);
     },
@@ -66,7 +81,7 @@
   // handle keydown event
   function dispatch(event) {
     var key, handler, k, i, modifiersMatch, scope;
-    key = event.keyCode;
+    key = _NUMPAD_TO_NORMAL[event.keyCode] || event.keyCode;
 
     if (index(_downKeys, key) == -1) {
         _downKeys.push(key);
@@ -215,6 +230,9 @@
   // element types
   function filter(event){
     var el = (event.target || event.srcElement);
+    // HTML document does not contain tagName and classList. Instead, we set
+    // the element as document element.
+    var el = el instanceof HTMLDocument ? el.documentElement : el;
     var tagName = el.tagName;
     var classList = el.classList;
 
