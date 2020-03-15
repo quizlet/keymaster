@@ -504,6 +504,22 @@
         t.assertEqual(1, cntFourth);
       },
 
+      testOverlappingScopeEdgeCases: function (t) {
+        key.setScope();
+
+        key.addOverlappingScope('one');
+        key.addOverlappingScope('one');
+
+        t.assertEqual(key.getScope(), 'one');
+
+        key.addOverlappingScope('two');
+        key.addOverlappingScope('one');
+
+        t.assertEqual(
+          JSON.stringify(key.getScope()), JSON.stringify(['one', 'two'])
+        );
+      },
+
       testDoesntFireOnUserInputElements: function(t){
         var cntAll = 0;
         key('a', 'all', function(){ cntAll++ })

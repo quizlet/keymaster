@@ -311,8 +311,18 @@
       newScope.push(currScope);
     }
 
+    if (newScope.indexOf(scope) > -1) {
+      // do not add scope if it is already active
+      return;
+    }
+
     newScope.push(scope);
-    _scope.push(newScope);
+
+    if (Array.isArray(currScope)) {
+      _scope[_scope.length - 1] = newScope;
+    } else {
+      pushScope(newScope);
+    }
   }
 
   function removeOverlappingScope(scope) {
@@ -332,7 +342,7 @@
 
     if (currScope.length == 0) {
       // if last overlapping scope is removed,
-      // then remove the scope
+      // then remove the now-empty multi-scope
       _scope.pop();
     } else {
       _scope[_scope.length - 1] = currScope;
