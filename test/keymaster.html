@@ -398,6 +398,128 @@
 
       },
 
+    testOverlappingScopes: function(t) {
+        var cntAll = 0,
+          cntFirst = 0,
+          cntSecond = 0,
+          cntThird = 0,
+          cntFourth = 0;
+
+        key("a", "all", function() {
+          cntAll++;
+        });
+        key("a", "firstScope", function() {
+          cntFirst++;
+        });
+        key("b", "secondScope", function() {
+          cntSecond++;
+        });
+        key("c", "thirdScope", function() {
+          cntThird++;
+        });
+        key("d", "fourthScope", function() {
+          cntFourth++;
+        });
+
+        // active scope: "all"
+        key.setScope();
+        t.assertEqual("all", key.getScope());
+
+        keydown(65);
+        keyup(65);
+
+        // active scope: "firstScope"
+        key.pushScope("firstScope");
+
+        keydown(65);
+        keyup(65);
+
+        keydown(66);
+        keyup(66);
+
+        // active scope: "secondScope"
+        key.pushScope("secondScope");
+
+        keydown(66);
+        keyup(66);
+
+        // active scope: ["secondScope", "thirdScope"]
+        key.addOverlappingScope("thirdScope");
+
+        keydown(66);
+        keyup(66);
+
+        keydown(67);
+        keyup(67);
+
+        // active scope: ["secondScope", "thirdScope", "fourthScope"]
+        key.addOverlappingScope("fourthScope");
+
+        keydown(66);
+        keyup(66);
+
+        keydown(67);
+        keyup(67);
+
+        keydown(68);
+        keyup(68);
+
+        // active scope: ["secondScope", "thirdScope"]
+        key.removeOverlappingScope("fourthScope");
+
+        keydown(66);
+        keyup(66);
+
+        keydown(67);
+        keyup(67);
+
+        keydown(68);
+        keyup(68);
+
+        // active scope: ["secondScope"]
+        key.removeOverlappingScope("thirdScope");
+
+        keydown(66);
+        keyup(66);
+
+        keydown(67);
+        keyup(67);
+
+        keydown(68);
+        keyup(68);
+
+        // active scope: "all"
+        key.popScope("secondScope");
+        key.popScope("firstScope");
+
+        keydown(65);
+        keyup(65);
+
+        t.assertEqual("all", key.getScope());
+
+        t.assertEqual(3, cntAll);
+        t.assertEqual(1, cntFirst);
+        t.assertEqual(5, cntSecond);
+        t.assertEqual(3, cntThird);
+        t.assertEqual(1, cntFourth);
+      },
+
+      testOverlappingScopeEdgeCases: function (t) {
+        key.setScope();
+
+        key.addOverlappingScope('one');
+        key.addOverlappingScope('one');
+
+        t.assertEqual(key.getScope(), 'one');
+
+        key.addOverlappingScope('two');
+        key.addOverlappingScope('one');
+
+        t.assertEqual(
+          JSON.stringify(key.getScope()), JSON.stringify(['one', 'two'])
+        );
+      },
+
       testDoesntFireOnUserInputElements: function(t){
         var cntAll = 0;
         key('a', 'all', function(){ cntAll++ })
@@ -516,12 +638,12 @@
 
       testNumpadKeyPressLinkToNumkey: function(t) {
         keydown(96);
-      	t.assertTrue(key.isPressed(48));
-      	keyup(96);
+        t.assertTrue(key.isPressed(48));
+        keyup(96);
 
-      	keydown(102);
-      	t.assertTrue(key.isPressed(54));
-      	keyup(102);
+        keydown(102);
+        t.assertTrue(key.isPressed(54));
+        keyup(102);
       },
     });
   </script>

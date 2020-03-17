@@ -111,7 +111,11 @@
       handler = _handlers[key][i];
 
       // see if it's in the current scope
-      if(handler.scope == scope || handler.scope == 'all'){
+      if (
+        (Array.isArray(scope) && scope.indexOf(handler.scope) >= 0) ||
+        handler.scope == scope ||
+        handler.scope == "all"
+      ) {        
         // check if modifiers match if any
         modifiersMatch = handler.mods.length > 0;
         for(k in _mods)
@@ -271,7 +275,9 @@
         break;
       }
     }
+
     _scope = newScope;
+    removeOverlappingScope(scope);
   };
 
   // delete all handlers for a given scope
@@ -286,6 +292,62 @@
       }
     }
   };
+
+  // adds an overlapping scope on top of current scope
+  function addOverlappingScope(scope) {
+    var currScope = getScope();
+    var newScope = [];
+
+    if (currScope == "all") {
+      // if current scope is "all", then call setScope instead
+      setScope(scope);
+      return;
+    } else if (Array.isArray(currScope)) {
+      // if there are already multiple scopes currently active,
+      // preserve existing scopes when adding new scope
+      newScope = currScope;
+    } else {
+      // if only one scope, preserve old scope
+      newScope.push(currScope);
+    }
+
+    if (newScope.indexOf(scope) > -1) {
+      // do not add scope if it is already active
+      return;
+    }
+
+    newScope.push(scope);
+
+    if (Array.isArray(currScope)) {
+      _scope[_scope.length - 1] = newScope;
+    } else {
+      pushScope(newScope);
+    }
+  }
+
+  function removeOverlappingScope(scope) {
+    var currScope = getScope();
+    if (!Array.isArray(currScope)) {
+      // if there aren't simultaneous scopes active, ignore
+      return false;
+    }
+
+    var removeIndex = currScope.indexOf(scope);
+    if (removeIndex >= 0) {
+      // if overlapping scope exists, remove it from the list
+      currScope.splice(removeIndex, 1);
+    } else {
+      return;
+    }
+
+    if (currScope.length == 0) {
+      // if last overlapping scope is removed,
+      // then remove the now-empty multi-scope
+      _scope.pop();
+    } else {
+      _scope[_scope.length - 1] = currScope;
+    }
+  }
 
   // abstract key logic for assign and unassign
   function getKeys(key) {
@@ -338,6 +400,8 @@
   global.key.pushScope = pushScope;
   global.key.popScope = popScope;
   global.key.deleteScope = deleteScope;
+  global.key.addOverlappingScope = addOverlappingScope;
+  global.key.removeOverlappingScope = removeOverlappingScope;
   global.key.filter = filter;
   global.key.isPressed = isPressed;
   global.key.getPressedKeyCodes = getPressedKeyCodes;
